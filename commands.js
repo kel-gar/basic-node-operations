@@ -13,57 +13,75 @@ function evaluateCmd(userInput) {
   const command = userInputArray[0];
 
   switch (command) {
-      case "echo":
-       //we will add the functionality of echo next within the object commandLibrary
-        commandLibrary.echo(userInputArray.slice(1).join(" "));
-        break;
-      case "cat":
-        commandLibrary.cat(userInputArray.slice(1));
-        break;
-      case "head":
-        commandLibrary.head(userInputArray.slice(1));
-        break;
-      case "tail":
-        commandLibrary.tail(userInputArray.slice(1));
-        break;
-      default:
-        text= "No Such Command Found";
-    }
+    case "echo":
+      commandLibrary.echo(userInputArray.slice(1).join(" "));
+      break;
+    case "cat":
+      commandLibrary.cat(userInputArray.slice(1));
+      break;
+    case "head":
+      commandLibrary.head(userInputArray.slice(1));
+      break;
+    case "tail":
+      commandLibrary.tail(userInputArray.slice(1));
+      break;
+    default:
+      console.log('No such command found');
+  }
 }
 
 //where we will store the logic of our commands
 const commandLibrary = {
   "echo": function(userInput) {
-       done(userInput);
+     done(userInput);
    },
   "cat": function(fullPath) {
-          const fileName = fullPath[0];
-          fs.readFile(fileName, (err, data) => {
-              if (err) throw err;
-              done(data);
-          });
-      }
-  "head": function(fullPath) {
-          const fileName = fullPath[0];
-          fs.head(fileName, (err, data) => {
-            if (err) throw err;
-            done(data);
-          });
+     const fileName = fullPath[0];
+     fs.readFile(fileName, (err, data) => {
+         if (err) throw err;
+         done(data);
+     });
+   },
+   "head": function(fullPath) {
+      const fileName = fullPath[0];
+      fs.readFile(fileName, "utf8", (err, data) => {
+          if (err) throw err;
+          let lineCount = 0;
+          let dataHead = [];
+          for (let i = 0; i<= data.length; i++) {
+            if (data[i] === '\n') {
+              lineCount++;
+            };
+            if (lineCount<10) {
+              dataHead.push(data[i]);
+            };
+          };
+          done(dataHead.join(''));
+      });
+    },
+    "tail": function(fullPath) {
+      const fileName = fullPath[0];
+      fs.readFile(fileName, "utf8", (err, data) => {
+          if (err) throw err;
+          let totalLines = 0;
+          let lineCount = 0;
+          let dataTail = [];
+          for (let i = 0; i<= data.length; i++) {
+            if (data[i] === '\n') {
+              totalLines++;
+            };
+          };
+          for (let i = 0; i<= data.length; i++) {
+            if (data[i] === '\n') {
+              lineCount++;
+            };
+            if (lineCount >= totalLines - 10) {
+              dataTail.push(data[i]);
+            };
+          };
+          done(dataTail.join(''));
+      });
     }
-  "tail": function(fullPath) {
-          const fileName = fullPath[0];
-          fs.head(fileName, (err, data) => {
-            if (err) throw err;
-            done(data);
-          });
-    }
-  // "errorHandler": function(fullPath) {
-  //         const fileName = fullPath[0];
-  //         fs.stat(fileName, (err, data) => {
-  //           if (err) throw err;
-  //           done(data);
-  //         });
-  //   }
 };
 
 module.exports.commandLibrary = commandLibrary;
