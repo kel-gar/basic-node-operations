@@ -51,7 +51,7 @@ const commandLibrary = {
           for (let i = 0; i<= data.length; i++) {
             if (data[i] === '\n') {
               lineCount++;
-            };
+            };  
             if (lineCount<10) {
               dataHead.push(data[i]);
             };
